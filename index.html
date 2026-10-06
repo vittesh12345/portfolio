@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vittesh Maganti</title>
+<meta name="description" content="Projects by Vittesh Maganti: ORBIT-AI, a self-checking AI chip design for orbit; Vantage; DecepBench; RoadVision; TennisVisionAI; ODRB; Tempo; and more.">
+<meta property="og:title" content="Vittesh Maganti">
+<meta property="og:description" content="What I've built, how, and what it taught me.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vittesh12345.github.io/portfolio/">
+<meta property="og:image" content="https://vittesh12345.github.io/portfolio/assets/img/chip-die-tilt.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23141e28'/%3E%3Crect%20x='7'%20y='7'%20width='18'%20height='18'%20fill='none'%20stroke='%23e2a84d'%20stroke-width='2'/%3E%3Cpath%20d='M11%203v4M16%203v4M21%203v4M11%2025v4M16%2025v4M21%2025v4M3%2011h4M3%2016h4M3%2021h4M25%2011h4M25%2016h4M25%2021h4'%20stroke='%23e2a84d'%20stroke-width='2'/%3E%3C/svg%3E">
+<style>
+/* Layout: a datasheet. A sticky index rail on wide screens, one reading column,
+   figures allowed to run wider than the text. Each project is a "sheet" with a spec strip. */
+:root {
+  --ground: #edf1f4;
+  --paper: #f8fafb;
+  --ink: #141e28;
+  --ink-2: #4a5967;
+  --rule: #c9d3db;
+  --accent: #8a5807;
+  --accent-soft: #e8c98a;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --measure: 40rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0d1319;
+    --paper: #131b23;
+    --ink: #dae3ea;
+    --ink-2: #97a6b4;
+    --rule: #27333e;
+    --accent: #e2a84d;
+    --accent-soft: #4a3814;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0d1319;
+  --paper: #131b23;
+  --ink: #dae3ea;
+  --ink-2: #97a6b4;
+  --rule: #27333e;
+  --accent: #e2a84d;
+  --accent-soft: #4a3814;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  -webkit-text-size-adjust: 100%;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+::selection { background: var(--accent-soft); }
+code { font-family: var(--mono); font-size: .85em; }
+
+.skip { position: absolute; left: -999px; top: 0; background: var(--paper); padding: .5rem 1rem; z-index: 10; }
+.skip:focus { left: 1rem; top: 1rem; }
+
+.wrap {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 48px);
+  padding-block: 0 4rem;
+  display: grid;
+  grid-template-columns: 14.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+/* ---------- rail ---------- */
+.rail {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 2.25rem);
+  align-self: start;
+  padding-top: 2.25rem;
+  font-family: var(--mono);
+  font-size: .78rem;
+  line-height: 1.5;
+  display: grid;
+  gap: 1.75rem;
+  max-height: calc(100vh - 2.25rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding-inline: 6px;
+  margin-inline: -6px;
+}
+.rail .who { font-family: var(--display); font-stretch: 125%; font-weight: 750; font-size: 1rem; letter-spacing: .01em; text-decoration: none; color: var(--ink); }
+.rail .where { color: var(--ink-2); margin-top: .25rem; }
+.rail .rail-h { font: inherit; font-size: .68rem; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-2); margin: 0 0 .5rem; font-weight: 500; }
+.rail ol, .rail ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+.rail a { text-decoration: none; color: var(--ink); display: flex; gap: .6rem; }
+.rail a:hover { color: var(--accent); }
+.rail a .n { color: var(--ink-2); min-width: 2.1rem; font-variant-numeric: tabular-nums; }
+.rail a[aria-current] { color: var(--accent); }
+
+/* ---------- main ---------- */
+main { min-width: 0; padding-top: 2.25rem; }
+.intro { max-width: var(--measure); padding-bottom: 2.5rem; }
+.eyebrow {
+  font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--ink-2); margin: 0 0 .75rem;
+}
+h1 {
+  font-family: var(--display); font-stretch: 125%; font-weight: 800;
+  font-size: clamp(2.5rem, 6.4vw, 4.6rem); line-height: .98; letter-spacing: -.015em;
+  margin: 0 0 1.5rem; text-wrap: balance;
+}
+.lede { font-size: 1.32rem; line-height: 1.5; margin: 0 0 1rem; text-wrap: pretty; }
+.intro p { margin: 0 0 1rem; text-wrap: pretty; }
+.now {
+  margin-top: 1.5rem; padding: .9rem 1.1rem; border-left: 3px solid var(--accent);
+  background: var(--paper); font-size: 1rem;
+}
+.now b { font-family: var(--mono); font-weight: 500; font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--accent); display: block; margin-bottom: .2rem; }
+
+figure { margin: 0; }
+.fig { background: var(--paper); border: 1px solid var(--rule); }
+.fig img { width: 100%; }
+.fig figcaption {
+  font-family: var(--mono); font-size: .72rem; line-height: 1.5; color: var(--ink-2);
+  padding: .65rem .85rem; border-top: 1px solid var(--rule);
+}
+.hero-fig { margin-bottom: 3.5rem; }
+
+/* section headings */
+.section { padding-top: 3.5rem; border-top: 1px solid var(--rule); margin-top: 1rem; }
+.section > h2, .sheet h2 {
+  font-family: var(--display); font-stretch: 112%; font-weight: 750;
+  font-size: clamp(1.6rem, 3vw, 2.15rem); line-height: 1.1; letter-spacing: -.01em;
+  margin: 0 0 .6rem; text-wrap: balance;
+}
+.section > .sub { color: var(--ink-2); max-width: var(--measure); margin: 0 0 2rem; }
+
+/* index of work */
+.index { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.index li { border-bottom: 1px solid var(--rule); }
+.index a {
+  display: grid; grid-template-columns: 6.5rem minmax(0, 14rem) minmax(0, 1fr); gap: 1rem;
+  padding: .85rem 0; text-decoration: none; color: var(--ink); align-items: baseline;
+}
+.index a:hover .t { color: var(--accent); }
+.index .y { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.index .t { font-family: var(--display); font-weight: 650; font-size: 1.05rem; }
+.index .d { font-size: 1rem; color: var(--ink-2); }
+
+/* project sheets */
+.sheet { padding-top: 4rem; scroll-margin-top: 1rem; }
+.sheet + .sheet { margin-top: 1rem; border-top: 1px solid var(--rule); }
+.kind {
+  font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--accent); margin: 0 0 .6rem; display: flex; flex-wrap: wrap; gap: .25rem .9rem;
+}
+.kind span + span { color: var(--ink-2); }
+.sheet .tag { font-size: 1.2rem; line-height: 1.5; max-width: var(--measure); margin: 0 0 1.5rem; text-wrap: pretty; }
+
+.spec {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule);
+  margin: 0 0 1.75rem; padding: 0;
+}
+.spec div { padding: .8rem 1rem .9rem 0; min-width: 0; }
+.spec dt { font-family: var(--mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-2); }
+.spec dd { margin: .2rem 0 0; font-family: var(--display); font-weight: 700; font-size: 1.45rem; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.spec dd small { font-family: var(--mono); font-weight: 400; font-size: .7rem; color: var(--ink-2); display: block; margin-top: .2rem; letter-spacing: 0; }
+
+.figs { display: grid; gap: 1rem; margin: 0 0 2rem; }
+.figs.two { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+
+.parts { display: grid; gap: 1.6rem; max-width: var(--measure); }
+.parts h3 {
+  font-family: var(--mono); font-size: .72rem; font-weight: 500; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--ink-2); margin: 0 0 .45rem;
+}
+.parts p { margin: 0 0 .75rem; text-wrap: pretty; }
+.parts ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .45rem; }
+.parts li::marker { color: var(--accent); }
+.parts .caveat { font-size: .95rem; color: var(--ink-2); margin-top: .9rem; padding-top: .7rem; border-top: 1px dashed var(--rule); }
+
+.links { display: flex; flex-wrap: wrap; gap: .5rem .6rem; margin: 1.75rem 0 0; padding: 0; list-style: none; }
+.links a {
+  font-family: var(--mono); font-size: .78rem; text-decoration: none; color: var(--ink);
+  border: 1px solid var(--rule); background: var(--paper); padding: .35rem .65rem; display: inline-block;
+}
+.links a:hover { border-color: var(--accent); color: var(--accent); }
+.links a::after { content: " ↗"; content: " ↗" / ""; color: var(--ink-2); }
+
+/* lists: papers, experience, activities */
+.entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.entries > li {
+  display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1.25rem;
+  padding: 1.1rem 0; border-bottom: 1px solid var(--rule);
+}
+.entries .y { font-family: var(--mono); font-size: .78rem; color: var(--ink-2); padding-top: .2rem; font-variant-numeric: tabular-nums; }
+.entries h3 { font-family: var(--display); font-weight: 650; font-size: 1.1rem; line-height: 1.3; margin: 0 0 .25rem; }
+.entries p { margin: 0 0 .35rem; font-size: 1rem; max-width: var(--measure); }
+.entries .meta { font-family: var(--mono); font-size: .75rem; color: var(--ink-2); }
+
+.elsewhere { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0 2rem; list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }
+.elsewhere li { border-bottom: 1px solid var(--rule); padding: .8rem 0; }
+.elsewhere a { font-family: var(--display); font-weight: 650; text-decoration: none; }
+.elsewhere span { display: block; font-family: var(--mono); font-size: .75rem; color: var(--ink-2); overflow-wrap: anywhere; }
+
+footer { margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: .72rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: .5rem 2rem; justify-content: space-between; }
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 960px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .rail { display: none; }
+  main { padding-top: 1.5rem; }
+}
+@media (max-width: 640px) {
+  body { font-size: 1.0625rem; }
+  .index a { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+  .entries > li { grid-template-columns: minmax(0, 1fr); gap: .25rem; }
+  .spec dd { font-size: 1.25rem; }
+  .lede { font-size: 1.18rem; }
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#work">Skip to projects</a>
+<div class="wrap">
+
+<aside class="rail">
+  <div>
+    <a class="who" href="#top">Vittesh Maganti</a>
+    <div class="where">Vanderbilt, Class of 2030<br>From Fremont, CA</div>
+  </div>
+  <nav aria-label="Projects">
+    <p class="rail-h">Projects</p>
+    <ol>
+      <li><a href="#orbit-ai"><span class="n">2026</span>ORBIT-AI</a></li>
+      <li><a href="#vantage"><span class="n">2026</span>Vantage</a></li>
+      <li><a href="#decepbench"><span class="n">2025</span>DecepBench</a></li>
+      <li><a href="#roadvision"><span class="n"></span>RoadVision</a></li>
+      <li><a href="#tennis"><span class="n"></span>TennisVisionAI</a></li>
+      <li><a href="#odrb"><span class="n">2026</span>ODRB</a></li>
+      <li><a href="#tempo"><span class="n">2026</span>Tempo</a></li>
+      <li><a href="#smaller"><span class="n" aria-hidden="true">+</span>Smaller builds</a></li>
+    </ol>
+  </nav>
+  <nav aria-label="More">
+    <p class="rail-h">More</p>
+    <ol>
+      <li><a href="#research">Research &amp; work</a></li>
+      <li><a href="#activities">Activities</a></li>
+      <li><a href="#elsewhere">Elsewhere</a></li>
+    </ol>
+  </nav>
+  <nav class="rail-links" aria-label="Profiles">
+    <p class="rail-h">Find me</p>
+    <ul>
+      <li><a href="https://github.com/vittesh12345">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/vittesh-ram-maganti-1809902b2/">LinkedIn</a></li>
+      <li><a href="https://devpost.com/vittesh-ram-maganti">Devpost</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<main id="top">
+
+<header class="intro">
+  <p class="eyebrow">Vanderbilt, Class of 2030 &middot; Portfolio, October 2026</p>
+  <h1>Vittesh Maganti</h1>
+  <p class="lede">I'm a first-year at Vanderbilt. I build computer vision and AI tools. Right now I'm working on ORBIT-AI, a design for a small AI chip for satellites that catches its own bit flips. So far it exists as a checked layout and in simulation, not as silicon.</p>
+  <p>This page covers what I've built, what was hard about it, and what I took away. Most of the code in my 2026 projects was written by AI coding agents (Claude Code) working from my specs and decisions. I say so on each project, and I name the teammates who built parts of them.</p>
+  <p class="now"><b>Now</b>Putting together a design-review package for ORBIT-AI (layout, schematics, verification logs and known gaps) so another chip designer can review it.</p>
+</header>
+
+<figure class="fig hero-fig">
+  <img src="assets/img/chip-die-tilt.webp" width="1253" height="691" fetchpriority="high" alt="Tilted 3D render of the ORBIT-AI chip layout: a square die covered in a fine grid of metal wiring layers.">
+  <figcaption>ORBIT-AI demonstrator, rendered from its routed layout. 346 &times; 346 &micro;m on the SkyWater 130&nbsp;nm open process.</figcaption>
+</figure>
+
+<section class="section" id="work" aria-labelledby="work-h">
+  <h2 id="work-h">Index</h2>
+  <p class="sub">Biggest first. Each one opens into its own sheet below.</p>
+  <ol class="index">
+    <li><a href="#orbit-ai"><span class="y">2026&ndash;now</span><span class="t">ORBIT-AI</span><span class="d">A small AI chip design for orbit that halts on, or repairs, its own bit flips. Layout and simulation stage</span></a></li>
+    <li><a href="#vantage"><span class="y">2026&ndash;now</span><span class="t">Vantage</span><span class="d">Software that flags when a satellite maneuvers and explains why it matters</span></a></li>
+    <li><a href="#decepbench"><span class="y">2025</span><span class="t">DecepBench</span><span class="d">A benchmark for spotting deception in video. ACL 2025 workshop paper and NeurIPS 2025 workshop poster</span></a></li>
+    <li><a href="#roadvision"><span class="y"></span><span class="t">RoadVision</span><span class="d">Pothole and crack detection with an AR overlay that maps road damage by location</span></a></li>
+    <li><a href="#tennis"><span class="y"></span><span class="t">TennisVisionAI</span><span class="d">Stroke recognition and coaching cues from tennis video</span></a></li>
+    <li><a href="#odrb"><span class="y">2026</span><span class="t">ODRB</span><span class="d">A benchmark for how object detectors hold up under simulated fog, blur and adversarial attacks</span></a></li>
+    <li><a href="#tempo"><span class="y">2026</span><span class="t">Tempo</span><span class="d">An AI dance coach that runs in the browser and corrects your form live</span></a></li>
+    <li><a href="#smaller"><span class="y">2025&ndash;26</span><span class="t">Smaller builds</span><span class="d">An iOS waste classifier, a TreeHacks agent, a semester planner, and a truck-maintenance prototype</span></a></li>
+  </ol>
+</section>
+
+<!-- ============ ORBIT-AI ============ -->
+<article class="sheet" id="orbit-ai" aria-labelledby="orbit-h">
+  <p class="kind"><span>Hardware</span><span>Sep 2026 &ndash; now</span><span>Lead, built with AI coding agents</span></p>
+  <h2 id="orbit-h">ORBIT-AI</h2>
+  <p class="tag">Radiation in orbit flips bits in a chip's memory, and a satellite can't be sent back for repairs. ORBIT-AI is a small AI accelerator that keeps its results twice in physically separate places, compares them every clock, and refuses to release an answer when they disagree. Working with AI coding agents, I took it from a concept brief to a routed layout that passes design-rule and layout-versus-schematic checks in the open-source flow.</p>
+
+  <dl class="spec">
+    <div><dt>Die</dt><dd>346 &times; 346 &micro;m<small>SkyWater sky130, open PDK</small></dd></div>
+    <div><dt>Compute</dt><dd>1.1 GOPS<small>INT8, 4 lanes at 139 MHz (calculated)</small></dd></div>
+    <div><dt>Bit flips injected</dt><dd>936 / 936<small>simulated on the routed netlist: 702 stopped, 234 repaired, 0 wrong outputs</small></dd></div>
+    <div><dt>Copy spacing</dt><dd>&ge; 251 &micro;m<small>was 2.76 &micro;m before separation (layout geometry)</small></dd></div>
+    <div><dt>Layout checks</dt><dd>0 DRC<small>KLayout; LVS match, antenna clean</small></dd></div>
+  </dl>
+
+  <div class="figs two">
+    <figure class="fig">
+      <img src="assets/img/chip-separated.webp" width="1400" height="995" loading="lazy" alt="Routed chip layout with copy A fenced on the left edge in cyan, copy B on the right edge in pink, and three thermal-controller copies boxed down the middle.">
+      <figcaption>The routed layout after separation. Copy A (left) and copy B (right) sit in placement fences 242&nbsp;&micro;m apart; the three thermal-controller copies run down the middle.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="assets/img/chip-layout-parts.webp" width="1285" height="889" loading="lazy" alt="3D view of the chip with standard cells colored by function: storage copies on the edges, multipliers and adders in the center.">
+      <figcaption>The same layout in the 3D die explorer, cells colored by the part they belong to.</figcaption>
+    </figure>
+  </div>
+
+  <div class="parts">
+    <div>
+      <h3>What I built</h3>
+      <ul>
+        <li>Starting from the concept brief's spec, a four-lane INT8 multiply-accumulate engine. Every accumulator and result register is duplicated and compared each clock; on a mismatch the chip stops instead of sending out a wrong answer. The thermal controller (illustrative thresholds: throttle at 80&nbsp;&deg;C, stop at 95&nbsp;&deg;C) is kept in three copies with a majority vote that rewrites a flipped copy on the next clock.</li>
+        <li>A run of the design through the full open-source chip flow: Verilog, Yosys synthesis, OpenROAD place and route, and KLayout design-rule and layout-versus-schematic checks.</li>
+        <li>The physical separation. In the first layout, 13 of the 262 redundant pairs sat in touching cells, as close as 2.76&nbsp;&micro;m, so one particle strike could flip both copies and the comparison would miss it. I asked for the copies to be separated; they now sit in fences on opposite edges of the die, and timing was re-closed.</li>
+        <li>A verification suite: unbounded formal proofs (SymbiYosys), fault injection on the RTL and on the routed gate-level netlist, and mutation testing to check that the tests themselves catch broken designs.</li>
+        <li>A 3D die explorer generated from the real layout files.</li>
+      </ul>
+      <p class="caveat">How it was built: Claude Code agents wrote the Verilog, testbenches, flow scripts, reports and 3D viewer, starting from the ORBIT-AI v0.1 concept brief. I set the goal and scope, asked for the redundant copies to be physically separated, asked Claude to use its research to improve the design, which produced a radiation-hardening note and a list of fixes for a second version that hasn't been built yet, and sent the visuals and write-up back when they weren't right.</p>
+    </div>
+    <div>
+      <h3>What was hard</h3>
+      <ul>
+        <li>Synthesis tools delete redundancy if you let them. The three thermal copies have identical inputs, so without protection Yosys merges them into one (521 flip-flops drop to 517), and a plain <code>keep</code> attribute doesn't stop it. Each copy is now its own instance with <code>keep_hierarchy</code>, and an audit counts flip-flops per group after every run, with a negative control that proves the audit catches the merge.</li>
+        <li>Separation costs speed. Each lane's shared multiplier now has to reach two copies on opposite sides of the die, which slowed the clock from 7.0 to 7.2&nbsp;ns, and routed wiring grew from 160&nbsp;mm to 244&nbsp;mm, mostly on the copies' outputs crossing the die to the shared comparators and adders.</li>
+        <li>Testing the tests. The agents broke the design 40 deliberate ways, and 5 of the broken versions still passed every check (one turned out to behave identically). Most only show up after a flip in an unprotected flip-flop such as the fault latch; they're written up as test gaps.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What I learned</h3>
+      <ul>
+        <li>Redundancy can be undone in two places: synthesis can merge the copies, and placement can put them side by side. Both have to be checked after every run.</li>
+        <li>A clean layout isn't a flight part. Simulation and formal proofs show the protection works as designed; only fabrication and beam testing would show it survives radiation.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Where it stands</h3>
+      <p>It's a design-stage demonstrator: a 346&nbsp;&micro;m core block with no pad ring or package. It hasn't been fabricated or radiation-tested, timing is closed at one corner only, and sky130 isn't a radiation-characterized process. Some shared parts (clock, reset, each lane's multiplier, the comparators) are still single points of failure, and three flip-flops have no protection at all: in the RTL fault campaign, flips in one of them escaped 200 times out of 200. The full concept is 16 tiles at a calculated 6.55 to 26.2 INT8 TOPS (200 to 800&nbsp;MHz), on paper only.</p>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="https://github.com/vittesh12345/chip">Source, reports and layouts</a></li>
+  </ul>
+</article>
+
+<!-- ============ Vantage ============ -->
+<article class="sheet" id="vantage" aria-labelledby="vantage-h">
+  <p class="kind"><span>Startup</span><span>Jun 2026 &ndash; now</span><span>Co-founder, with Nathan Aye</span></p>
+  <h2 id="vantage-h">Vantage</h2>
+  <p class="tag">Public satellite catalogs tell you where an object is. Vantage tries to tell you what it's doing. It reads public orbit data, flags when a satellite maneuvers or starts shadowing another satellite, and writes out its reasoning so an analyst can check it.</p>
+
+  <dl class="spec">
+    <div><dt>Collision-risk model</dt><dd>16 / 21<small>high-risk ESA conjunctions flagged 2 days ahead on held-out data (precision 0.23); ROC-AUC 0.963, cross-validated 0.956 &plusmn; 0.013</small></dd></div>
+    <div><dt>Real maneuvers caught</dt><dd>5 / 9<small>documented ISS and Aeolus burns, within &plusmn;2 days and in the right direction (0 / 9 before recalibration)</small></dd></div>
+    <div><dt>FCC filings re-checked</dt><dd>8 / 8<small>same 5-year-rule pass/fail as NASA's DAS on 8 orbit cases from two public filings (model-to-model, passive decay)</small></dd></div>
+  </dl>
+
+  <div class="figs two">
+    <figure class="fig">
+      <img src="assets/img/vantage-console.webp" width="1400" height="820" loading="lazy" alt="Vantage console: a mission feed of events such as catalog ingest, maneuver detected, and a shadowing alert, with an event detail panel listing the signals behind the call.">
+      <figcaption>The mission-feed demo on vantage.industries, running a synthetic scenario with made-up satellites. Each alert lists the signals behind it.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="assets/img/vantage-leo.webp" width="1400" height="820" loading="lazy" alt="3D globe of Earth wrapped in thousands of colored dots representing satellites, rocket bodies and debris, with filter controls on the left.">
+      <figcaption>The orbit map on vantage.industries. It draws about 27,600 objects generated to match the shape of the public catalog, and its look is modeled on LeoLabs' public visualization.</figcaption>
+    </figure>
+  </div>
+
+  <div class="parts">
+    <div>
+      <h3>What I built</h3>
+      <ul>
+        <li>The first version of the product in June 2026: live CelesTrak catalog ingest, maneuver detection, and an orbit console.</li>
+        <li>A collision-risk model built on ESA's public dataset of 162,634 real conjunction messages. Two days before closest approach, it predicts whether a close approach will end up rated high-risk, and its scores are calibrated as probabilities (calibration error 0.005 on held-out data, though that test set had only 21 high-risk events).</li>
+        <li>A validation harness that replays nine publicly documented ISS and Aeolus maneuvers against the detector.</li>
+        <li>An FCC orbital-debris exhibit generator, checked against two real public filings.</li>
+        <li>The first version of vantage.industries (domain, search setup, interactive demo), and the pitch deck, which I rebuilt after a mentor's written feedback and revised again after an in-person review.</li>
+      </ul>
+      <p class="caveat">How it was built: Claude Code wrote most of the code from my direction; I chose what to build, checked the results and merged the work. My co-founder Nathan Aye reworked the proximity engine, hardened security, ran the synthetic and proximity cross-checks that showed the recalibrated detector needs dense tracking data, built the Command Center and GUARDIAN screens and the ground-coverage feature, and did most of the site's current design.</p>
+    </div>
+    <div>
+      <h3>What was hard</h3>
+      <ul>
+        <li>Real maneuvers are tiny. Documented ISS and Aeolus burns are 0.5 to 2.4&nbsp;m/s. Our detector, tuned on synthetic data with an 8&nbsp;m/s floor, caught 0 of 9. Dropping the floor to 0.5&nbsp;m/s caught all 9, but buried them in about 1,700 detections, most of them noise. A detector that first removes atmospheric drag got to 5 of 9 with the right direction.</li>
+        <li>Physics that looks like intent. The first test of a "campaign watch" prototype, run on our synthetic test catalog, named a piece of debris and a spent rocket body as members of a coordinated campaign. Earth's bulge slowly rotates orbital planes (J2 precession), and the engine read that drift as satellites converging on a target. Chasing it down meant fixing seven false-alarm bugs.</li>
+        <li>Rare events. Only about 1% of conjunctions are high-risk, and the test set had 21 of them, so precision-recall scores swung a lot between folds. I report cross-validated ranges and calibration, not just one test-set score.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What I learned</h3>
+      <ul>
+        <li>A detector that hits 86.6% recall on synthetic data can catch 0 of 9 real maneuvers at the same setting. Real events have to come in early.</li>
+        <li>Pick thresholds away from the test set. The first collision model chose its alert threshold on the test data; choosing it by cross-validation instead dropped precision from 0.29 to 0.23. The lower number is the honest one.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Where it stands</h3>
+      <p>It has no customers or pilots yet and runs on public data only. Public catalogs carry no covariance, so collision scores are a screening signal, not an operational probability of collision. The response features are simulation only.</p>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="https://vantage.industries">vantage.industries</a></li>
+    <li><a href="https://vantage.industries/demo/">Demo</a></li>
+    <li><a href="https://vantage.industries/visualization/">Orbit map</a></li>
+  </ul>
+</article>
+
+<!-- ============ DecepBench ============ -->
+<article class="sheet" id="decepbench" aria-labelledby="decep-h">
+  <p class="kind"><span>Research</span><span>2025</span><span>Algoverse AI Research</span></p>
+  <h2 id="decep-h">DecepBench</h2>
+  <p class="tag">A benchmark for detecting deception in video. It takes the DOLOS game-show dataset (1,675 clips of 213 people lying or telling the truth), adds transcripts as a third input alongside audio and video, and tests models on cues drawn from deception psychology.</p>
+
+  <dl class="spec">
+    <div><dt>Published</dt><dd>ACL 2025<small>SICon workshop, Vienna, pp. 50&ndash;64</small></dd></div>
+    <div><dt>Poster</dt><dd>NeurIPS 2025<small>CogInterp workshop, San Diego</small></dd></div>
+    <div><dt>My position</dt><dd>2nd &middot; 1st<small>ACL author list &middot; NeurIPS workshop version</small></dd></div>
+  </dl>
+
+  <div class="parts">
+    <div>
+      <h3>What the work does</h3>
+      <ul>
+        <li>Adds Whisper transcripts to every clip (10% checked by hand), so models see text as well as audio and faces.</li>
+        <li>Extracts nine features grounded in deception psychology, such as micro-expressions, response latency and lexical diversity, and uses SHAP to see which cues a model relies on most.</li>
+        <li>Compares a multimodal model (Meta's ImageBind) against zero-shot GPT-4 and Gemini 1.5 working from the transcript alone.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>My part</h3>
+      <p>Co-author on a team mentored through Algoverse AI Research. I'm second author on the ACL Anthology paper and first author on the NeurIPS CogInterp workshop version, which was accepted as a poster.</p>
+    </div>
+    <div>
+      <h3>What makes it hard</h3>
+      <p>There's no single tell. The paper's limitations section says it plainly: cues vary from person to person and across cultures. That's why the benchmark combines text, audio and video and uses SHAP to check which cues a model actually leans on.</p>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="https://aclanthology.org/2025.sicon-1.3/">ACL Anthology</a></li>
+    <li><a href="https://aclanthology.org/2025.sicon-1.3.pdf">PDF</a></li>
+    <li><a href="https://doi.org/10.18653/v1/2025.sicon-1.3">DOI</a></li>
+    <li><a href="https://coginterp.github.io/neurips2025/accepted-papers/">CogInterp @ NeurIPS 2025</a></li>
+  </ul>
+</article>
+
+<!-- ============ RoadVision ============ -->
+<article class="sheet" id="roadvision" aria-labelledby="road-h">
+  <p class="kind"><span>Civic tech</span><span>Founder</span></p>
+  <h2 id="road-h">RoadVision</h2>
+  <p class="tag">RoadVision is a computer-vision tool for spotting road damage in street video and putting each problem on a map.</p>
+
+  <div class="parts">
+    <div>
+      <h3>What it does</h3>
+      <ul>
+        <li>Detects potholes, cracks and surface wear, and draws each detection on the road in an augmented-reality overlay.</li>
+        <li>Reads street names and records GPS coordinates for each detection.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Where it was tested</h3>
+      <p>On Milpitas streets, including Beresford Street and North Milpitas Boulevard.</p>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="https://roadvision.org/">roadvision.org</a></li>
+  </ul>
+</article>
+
+<!-- ============ Tennis ============ -->
+<article class="sheet" id="tennis" aria-labelledby="tennis-h">
+  <p class="kind"><span>App</span><span>Founder &amp; developer</span></p>
+  <h2 id="tennis-h">TennisVisionAI</h2>
+  <p class="tag">TennisVisionAI is the app I'm building to turn video of a player's strokes into coaching cues they can act on. Before it, I built TennVision, a desktop prototype, in May 2025. I captained my high school tennis team.</p>
+
+  <div class="parts">
+    <div>
+      <h3>What I built</h3>
+      <ul>
+        <li>TennVision, the prototype: MediaPipe pulls 33 body landmarks per frame, 30-frame windows feed a small Keras CNN that labels a clip's stroke as forehand or backhand, and a Tkinter app plays the video back with a pose overlay and YOLO object boxes. It then asks an LLM for coaching feedback from the measured joint positions and arm angles, falling back to 48 hand-written tips.</li>
+        <li>A script that gathers forehand and backhand video clips into a labeled training set.</li>
+        <li>TennisVisionAI, the app I'm finishing now. It's designed around video stroke analysis, performance metrics and one focused coaching cue at a time.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What was hard</h3>
+      <ul>
+        <li>Keeping training and inference consistent. Training used x, y and z for all 33 landmarks (99 numbers per frame). The analysis path packed x, y, z and visibility and kept the first 99 numbers, which fixed the shape error but fed the model different features from the ones it learned.</li>
+        <li>Finding the ball. I had no tennis-ball model, so the prototype leans on a general-purpose YOLO detector instead of one trained for tennis balls.</li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="http://tennisvisionai.com/">tennisvisionai.com</a></li>
+  </ul>
+</article>
+
+<!-- ============ ODRB ============ -->
+<article class="sheet" id="odrb" aria-labelledby="odrb-h">
+  <p class="kind"><span>Benchmark</span><span>Jun &ndash; Aug 2026</span><span>With Nathan Aye</span></p>
+  <h2 id="odrb-h">ODRB</h2>
+  <p class="tag">Object detectors are usually scored on clean images. ODRB, the Object Detection Robustness Benchmark, measures what's left under simulated fog, blur, motion blur, low light, smoke, dust, sensor noise and JPEG artifacts, and under adversarial attacks. It reports how much accuracy survives, with confidence intervals and a worst-case floor, and seals each result file with a SHA-256 digest so edits made after the run can be caught.</p>
+
+  <dl class="spec">
+    <div><dt>YOLOv8n, simulated conditions</dt><dd>61.2%<small>accuracy retained, 95% CI 59&ndash;65, 500 COCO images</small></dd></div>
+    <div><dt>YOLOv8n, attacks plus conditions</dt><dd>44.5%<small>retained, 95% CI 43&ndash;48; 6 white-box attacks plus the 8 conditions</small></dd></div>
+    <div><dt>YOLOv8n, PGD-L&infin; alone</dt><dd>6%<small>retained</small></dd></div>
+    <div><dt>Worst case</dt><dd>5.1%<small>YOLOv8n's floor across the simulated conditions</small></dd></div>
+  </dl>
+
+  <div class="figs two">
+    <figure class="fig">
+      <img src="assets/img/odrb-fog.webp" width="604" height="251" loading="lazy" alt="Side-by-side street scene: 21 detections on the clean image, 16 detections once synthetic fog is added.">
+      <figcaption>Same detector, same street. Clean: 21 detections. With simulated fog: 16.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="assets/img/odrb-patch.webp" width="604" height="251" loading="lazy" alt="Side-by-side market scene: 11 detections on the clean image, 24 once an adversarial patch is pasted in, most of them spurious boxes around the patch.">
+      <figcaption>Same detector, a market scene. Clean: 11 detections. With an optimized adversarial patch pasted in: 24, most of them false boxes on the patch itself.</figcaption>
+    </figure>
+  </div>
+
+  <div class="parts">
+    <div>
+      <h3>What I built</h3>
+      <ul>
+        <li>The scoring I directed Claude Code to build: retained accuracy under each condition, confidence intervals from an image bootstrap and from re-running attacks with different seeds, a worst-case floor, and a pass / conditional / fail verdict against a policy file.</li>
+        <li>Baseline runs on YOLOv8 nano, small and medium on COCO, and on RarePlanes overhead imagery, all on a CPU.</li>
+        <li>A synthetic-to-real test: fine-tuning YOLOv8n for 10 epochs on 120 synthetic RarePlanes images raised mAP@0.5 on 80 real satellite tiles from 0.119 to 0.772. Those 80 tiles were also used to pick the checkpoint, so that number is optimistic; on 500 real tiles the model scored 0.539.</li>
+      </ul>
+      <p class="caveat">How it was built: Claude Code wrote most of the code from my direction. Nathan Aye wrote the PGD attacks and the smoke and dust conditions, and later report signing, calibration scoring and a torchvision adapter.</p>
+    </div>
+    <div>
+      <h3>What was hard</h3>
+      <ul>
+        <li>Running on a CPU. White-box attacks need gradients and lots of compute, so the headline benchmark uses the black-box physical profile, and the full attack profile was run only for YOLOv8n.</li>
+        <li>Licensing. The Ultralytics YOLO package is AGPL, so in the ODRB release it became an opt-in extra and the bundled detectors run through ONNX Runtime instead; Nathan had also added a BSD-licensed torchvision adapter.</li>
+        <li>Labels can lie. On a six-image set labeled only for clearly visible objects, the smallest model looked best because bigger models found real objects the labels left out. Ranking models moved to the fully labeled COCO validation set.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What I learned</h3>
+      <ul>
+        <li>Robust to weather isn't robust to an attacker. YOLOv8n keeps 61% of its accuracy under simulated weather, blur and noise, but 6% under a PGD-L&infin; attack.</li>
+        <li>Motion blur and sensor noise did the most damage of the simulated conditions in every 500-image run: motion blur left 7 to 22% of accuracy, sensor noise 15 to 51%.</li>
+        <li>Small, reused test sets flatter you. The overhead model scored about 0.77 mAP@0.5 on the 80 real tiles that were also used to pick its checkpoint, and 0.539 on 500 tiles; the first 80 tiles also turned out to be easier.</li>
+        <li>Bigger YOLOv8 models were both more accurate and more robust: 61%, 66% and 73% retained for nano, small and medium.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Where it stands</h3>
+      <p>The code is private for now and has no outside users yet. Earlier benchmarks such as COCO-C already test detectors on corrupted images. ODRB's angle is reporting simulated physical conditions and adversarial attacks in one retained-accuracy score, with a sealed evidence file for each run.</p>
+    </div>
+  </div>
+</article>
+
+<!-- ============ Tempo ============ -->
+<article class="sheet" id="tempo" aria-labelledby="tempo-h">
+  <p class="kind"><span>App</span><span>Sep 2026</span><span>Built with AI agents</span></p>
+  <h2 id="tempo-h">Tempo</h2>
+  <p class="tag">Tempo watches you dance through your camera, compares your pose to a reference move, and tells you what to fix, like "Lower your left arm a touch: 36&deg; too high" or "0.3&nbsp;s late".</p>
+
+  <dl class="spec">
+    <div><dt>Runs</dt><dd>On-device<small>no video leaves the browser</small></dd></div>
+    <div><dt>Compares</dt><dd>14 features<small>joint angles, stance and weight shift</small></dd></div>
+    <div><dt>Moves</dt><dd>4<small>hip-hop, pop, disco, street</small></dd></div>
+  </dl>
+
+  <div class="figs two">
+    <figure class="fig">
+      <img src="assets/img/tempo-practice.webp" width="1280" height="800" loading="lazy" alt="Tempo practice screen: a glowing stick figure over a faint reference pose, with off-pose arm segments in red and a coaching card reading 'Lower your left arm a touch, 36 degrees too high'.">
+      <figcaption>A live correction in demo mode. The red limbs are the ones off the reference pose.</figcaption>
+    </figure>
+    <figure class="fig">
+      <img src="assets/img/tempo-learn.webp" width="1280" height="800" loading="lazy" alt="Tempo learn screen for the move Groove Bounce, with an animated figure, count markers 1 to 8, playback speeds, and the coach's key points.">
+      <figcaption>Learning a move count by count before dancing it.</figcaption>
+    </figure>
+  </div>
+
+  <div class="parts">
+    <div>
+      <h3>What I built</h3>
+      <ul>
+        <li>The product brief I gave Claude Code: camera pose tracking, a reference move, joint-angle and timing comparison, specific corrections instead of "you're doing it wrong", a ghost overlay, a session report, and progress over time. I asked for one dance move to work extremely well rather than lots of shallow features.</li>
+        <li>The call to ship it as a free website first. It's a static web app you can install on a phone, hosted on GitHub Pages.</li>
+        <li>Catching the gap between demo and product. The first public link only ran a simulated dancer, so I pushed back that it wasn't coaching me, and I made the repo public so the real camera version could go live.</li>
+      </ul>
+      <p class="caveat">How it was built: Claude Code wrote all of the code (TypeScript, React, MediaPipe Pose) from my brief in one evening.</p>
+    </div>
+    <div>
+      <h3>What was hard</h3>
+      <ul>
+        <li>Timing versus technique. If you're late, every joint looks wrong. Tempo first finds the time shift (up to 0.8&nbsp;s either way) that best lines your motion up with the choreography, then scores form with that shift removed, so lateness isn't counted twice.</li>
+        <li>Free hosting. GitHub Pages wouldn't deploy from a private repo on the free plan, so I made the repo public. Then the workflow token couldn't create the site, so Claude pushed the built app to a separate gh-pages branch, which GitHub serves.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Where it stands</h3>
+      <p>Live on GitHub Pages. The four reference moves are hand-written joint-angle keyframes, not recordings of a real instructor, and it hasn't been tested with outside users yet.</p>
+    </div>
+  </div>
+
+  <ul class="links">
+    <li><a href="https://vittesh12345.github.io/danceapp/">Try it</a></li>
+    <li><a href="https://github.com/vittesh12345/danceapp">Source</a></li>
+  </ul>
+</article>
+
+<!-- ============ Smaller builds ============ -->
+<section class="sheet" id="smaller" aria-labelledby="small-h">
+  <p class="kind"><span>Side projects</span><span>2025 &ndash; 2026</span></p>
+  <h2 id="small-h">Smaller builds</h2>
+  <ul class="entries">
+    <li>
+      <span class="y">Mar 2025</span>
+      <div>
+        <h3>WasteClassifier</h3>
+        <p>An iPhone app in SwiftUI: pick a photo, a Core ML model classifies the waste (for example paper, metal or plastic), and a simple rule turns the label into a recyclability hint.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y">Feb 2026</span>
+      <div>
+        <h3>Pokestrator &middot; TreeHacks 2026</h3>
+        <p>A self-improving iMessage agent built on Interaction's Poke that spins up sub-agents to build the tools it's missing. Built with Ayman Abdul-Majid in under 36 hours at Stanford.</p>
+        <p class="meta"><a href="https://devpost.com/software/pokestrator">Devpost</a></p>
+      </div>
+    </li>
+    <li>
+      <span class="y">Aug 2026</span>
+      <div>
+        <h3>College OS</h3>
+        <p>A planner for my first semester that ranks what to do next across classes, exams, clubs, research and startup work, instead of just sorting by due date. I gave Claude Code a 33-section spec with privacy rules (no getting around Vanderbilt's login, no stored passwords), and it built the app. Because the university systems sit behind single sign-on, schedules come in by paste or calendar feed.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y">Jun 2026</span>
+      <div>
+        <h3>Truck predictive maintenance</h3>
+        <p>A prototype Claude Code built from my spec: it fits a trend to each sensor on a simulated fleet of FMTV medium tactical trucks, projects when a reading will cross its safe limit, and drafts a parts requisition and repair task before the truck goes down. Claude Code then benchmarked the approach on public failure datasets. On NASA's C-MAPSS jet-engine benchmark, the app's straight-line trend missed remaining life by about 78 cycles (RMSE), while a separate gradient-boosting model cut that to 12.9. A failure classifier on Scania's public Component X truck data scored 0.84 ROC-AUC in 5-fold cross-validation, but 0.73 on the held-out test set, whose failure labels are defined differently.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============ Research & work ============ -->
+<section class="section" id="research" aria-labelledby="research-h">
+  <h2 id="research-h">Research &amp; work</h2>
+  <p class="sub">Labs, internships and roles.</p>
+  <ul class="entries">
+    <li>
+      <span class="y">Since Aug 2024</span>
+      <div>
+        <h3>MIT CSAIL &middot; Mantis, Prof. Manolis Kellis's group</h3>
+        <p>Mantis maps ideas and documents into a shared semantic space ("cognitive cartography"). I lead a team building internal tools for the lab, including a pipeline that turns the lab's weekly meetings into tasks it can track and assign.</p>
+        <p class="meta"><a href="https://mantis.csail.mit.edu/">mantis.csail.mit.edu</a></p>
+      </div>
+    </li>
+    <li>
+      <span class="y">2023 &ndash; 2025</span>
+      <div>
+        <h3>University of Alabama &middot; Digital Forensics Lab</h3>
+        <p>Research intern in perception and recognition. I designed neural networks for recognizing people in digital-forensics images.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y">2025</span>
+      <div>
+        <h3>Algoverse AI Research</h3>
+        <p>Mentored research program. Our team's paper, DecepBench, was published at the ACL 2025 SICon workshop and accepted as a poster at the NeurIPS 2025 CogInterp workshop.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y">Sep 2024</span>
+      <div>
+        <h3>City of Milpitas &middot; Public Works intern</h3>
+        <p>Public Works department, starting September 2024.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y" aria-hidden="true">&middot;</span>
+      <div>
+        <h3>Loopr AI</h3>
+        <p>I worked at Loopr AI, a startup that makes AI visual-inspection software for manufacturers.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============ Activities ============ -->
+<section class="section" id="activities" aria-labelledby="act-h">
+  <h2 id="act-h">Activities</h2>
+  <ul class="entries">
+    <li>
+      <span class="y">High school</span>
+      <div>
+        <h3>Boys' tennis, Mission San Jose High School</h3>
+        <p>Team captain, then varsity co-captain my senior year. In a spring 2026 match against American High, my co-captain and I beat their top doubles pair 6&ndash;2, 6&ndash;1 on court 1. UTR 6.0 (April 2025).</p>
+        <p class="meta"><a href="https://thesmokesignal.org/2026/03/10/msj-boys-tennis-star-players-dominates-in-game-against-american/">Match report</a> &middot; <a href="https://app.utrsports.net/profiles/902294">UTR profile</a></p>
+      </div>
+    </li>
+    <li>
+      <span class="y">High school</span>
+      <div>
+        <h3>Oxpecker Consulting &middot; Western Region Managing Director</h3>
+        <p>A student-run firm that gives local small businesses market analysis and strategy help.</p>
+        <p class="meta"><a href="https://www.oxpeckerconsulting.com/vittesh-maganti">Profile</a></p>
+      </div>
+    </li>
+    <li>
+      <span class="y">High school</span>
+      <div>
+        <h3>Neuroscience Club and Biotechnology Club, officer</h3>
+        <p>Mission San Jose High School.</p>
+      </div>
+    </li>
+    <li>
+      <span class="y" aria-hidden="true">&middot;</span>
+      <div>
+        <h3>Hackathons</h3>
+        <p>My Devpost profile lists 21 hackathons. At TreeHacks 2026 at Stanford, Ayman Abdul-Majid and I built Pokestrator (see Smaller builds).</p>
+        <p class="meta"><a href="https://devpost.com/vittesh-ram-maganti">Devpost</a></p>
+      </div>
+    </li>
+    <li>
+      <span class="y">2026</span>
+      <div>
+        <h3>U.S. Presidential Scholars Program</h3>
+        <p>Candidate.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ============ Elsewhere ============ -->
+<section class="section" id="elsewhere" aria-labelledby="else-h">
+  <h2 id="else-h">Elsewhere</h2>
+  <ul class="elsewhere">
+    <li><a href="https://github.com/vittesh12345">GitHub</a><span>github.com/vittesh12345</span></li>
+    <li><a href="https://www.linkedin.com/in/vittesh-ram-maganti-1809902b2/">LinkedIn</a><span>linkedin.com/in/vittesh-ram-maganti-1809902b2</span></li>
+    <li><a href="https://devpost.com/vittesh-ram-maganti">Devpost</a><span>devpost.com/vittesh-ram-maganti</span></li>
+    <li><a href="https://aclanthology.org/2025.sicon-1.3/">DecepBench paper</a><span>ACL Anthology, SICon 2025</span></li>
+    <li><a href="https://vantage.industries">Vantage</a><span>vantage.industries</span></li>
+    <li><a href="https://roadvision.org/">RoadVision</a><span>roadvision.org</span></li>
+    <li><a href="http://tennisvisionai.com/">TennisVisionAI</a><span>tennisvisionai.com</span></li>
+  </ul>
+</section>
+
+<footer>
+  <span>Vittesh Maganti &middot; 2026</span>
+  <span>Site code and text written with Claude Code. Images are screenshots and renders from the projects on this page; the street photos in the ODRB figures are CC0 images from Wikimedia Commons.</span>
+</footer>
+
+</main>
+</div>
+
+<script>
+// Highlight the rail entry for the section in view.
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail nav a[href^="#"]'));
+  if (!('IntersectionObserver' in window) || !links.length) return;
+  var byId = {};
+  links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+  function mark(id) {
+    links.forEach(function (a) { a.removeAttribute('aria-current'); });
+    if (id && byId[id]) byId[id].setAttribute('aria-current', 'location');
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) mark(e.target.id); });
+  }, { rootMargin: '-35% 0px -60% 0px' });
+  Object.keys(byId).forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+  window.addEventListener('scroll', function () {
+    var first = document.getElementById('orbit-ai');
+    if (first && first.getBoundingClientRect().top > window.innerHeight * 0.4) mark(null);
+    else if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) mark('elsewhere');
+  }, { passive: true });
+})();
+</script>
+
+</body>
+</html>
